@@ -1,0 +1,32 @@
+name: Run Blog Bot Daily
+
+on:
+  schedule:
+    # 매일 한국 시간 오후 4시(UTC 7시), 오후 8시(UTC 11시)에 실행되도록 설정
+    - cron: '0 1 * * *' 
+  workflow_dispatch: # 수동으로 버튼을 눌러 즉시 테스트할 수 있게 해주는 기능
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest # 가상의 우분투 컴퓨터를 대여
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3 # 내 저장소의 파일을 가져옴
+
+    - name: Set up Python
+      uses: actions/setup-python@v4 # 파이썬 환경 설치
+      with:
+        python-version: '3.10' #
+
+    - name: Install dependencies
+      run: |
+        pip install feedparser requests openai # 필요한 라이브러리 설치
+
+    - name: Run Python script
+      env:
+        # 깃허브 금고에 넣어둔 키들을 파이썬 코드의 os.environ이 읽을 수 있도록 연결
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: python blog_bot.py # 파이썬 파일 실행
