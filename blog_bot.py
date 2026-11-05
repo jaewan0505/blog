@@ -1,3 +1,4 @@
+import os  #
 import feedparser
 import requests
 from openai import OpenAI
