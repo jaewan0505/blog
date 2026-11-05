@@ -11,6 +11,16 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 # OpenAI 클라이언트 설정
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+def send_telegram_photo(token, chat_id, photo_url, caption):
+    url = f"https://api.telegram.org/bot{token}/sendPhoto"
+    payload = {
+        "chat_id": chat_id,
+        "photo": photo_url,
+        "caption": caption[:1024],  # 텔레그램 사진 캡션 최대 길이 제한 (1024자)
+        "parse_mode": "Markdown"
+    }
+    requests.post(url, data=payload)
+
 def send_telegram_message(text):
     """텔레그램으로 메시지를 전송하는 함수"""
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
